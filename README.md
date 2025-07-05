@@ -4,12 +4,64 @@ With so much text data being generated in different languages on social media, e
 
 ## Features
 
-- Detects the language of the input text (supports 30+ languages)
+- Detects the language of the input text 
 - Translates non-English reviews to English before processing
 - Predicts sentiment (Positive, Negative, Neutral) with confidence scores
 - Suggests relevant product categories (e.g., fashion, electronics)
-- Provides suggested star ratings (1–5 stars)
 - Allows voice input for quick review submission 🎤
 - Exports predictions as **CSV** or **JSON**
 - Displays interactive charts for language and sentiment distribution
-- Visualizes dataset analysis with downloadable summary charts
+
+## Tech Stack
+
+- **Frontend**: HTML, CSS , JavaScript, Chart.js
+- **Backend**: Python (Flask)
+- **NLP Models**: Hugging Face Transformers (e.g., BERT, MarianMT), custom-trained models
+- **Database**: MongoDB (to store predictions and feedback)
+- **Voice Recognition**: Web Speech API
+- **Visualization**: Matplotlib, Seaborn
+
+## Requirements
+
+- Python 3.8+
+- Node.js (for serving frontend optionally)
+- MongoDB (local or Atlas)
+
+  **Python Packages:**
+  ```bash
+  flask
+  transformers
+  torch
+  googletrans==4.0.0rc1
+  pymongo
+  matplotlib
+  seaborn
+
+## Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/<your-username>/multilingual-text-classifier.git
+cd multilingual-text-classifier
+```
+
+2. **Set up virtual environment**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install Python dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Configure MongoDB**
+- Start MongoDB server locally, or set `MONGO_URI` in `app.py` for cloud MongoDB Atlas.
+
+5. **Run the app**
+```bash
+python app.py
+```
+The app will be live at `http://127.0.0.1:5000`
+
