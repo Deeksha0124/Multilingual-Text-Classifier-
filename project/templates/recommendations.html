@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations - Zenify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <a href="{{ url_for('index') }}">
+                            <span class="logo-text">Zenify</span>
+                        </a>
+                    </div>
+                    <div class="nav-links">
+                        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                        <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                        <a href="{{ url_for('recommendations') }}" class="nav-link active">Recommendations</a>
+                        <a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                    </div>
+                    <div class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="recommendations-page">
+                <div class="container">
+                    <h1>Your Personalized Recommendations</h1>
+                    <p>These activities are tailored to your preferences and needs based on your survey responses and activity history.</p>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="filters-bar">
+                        <span class="filter-label">Filter by category:</span>
+                        <a href="{{ url_for('recommendations') }}" class="filter-pill {% if not selected_category %}active{% endif %}">All</a>
+                        
+                        {% for category in categories %}
+                        <a href="{{ url_for('recommendations', category=category) }}" class="filter-pill {% if selected_category == category %}active{% endif %}">
+                            {{ category|replace('_', ' ')|capitalize }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if recommendations %}
+                    <div class="recommendation-grid">
+                        {% for activity in recommendations %}
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <span class="activity-category">{{ activity.category|replace('_', ' ')|capitalize }}</span>
+                                <span class="activity-difficulty difficulty-{{ activity.difficulty }}">{{ activity.difficulty }}</span>
+                            </div>
+                            <h3 class="activity-title">{{ activity.name }}</h3>
+                            <p class="activity-description">{{ activity.description }}</p>
+                            <div class="activity-footer">
+                                <span class="relevance-score">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                                    {{ (activity.relevance_score * 100)|int }}% match
+                                </span>
+                                <a href="{{ url_for('activity_detail', activity_id=activity.id) }}" class="activity-action">View Details</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <h2>No recommendations found</h2>
+                        <p>Try selecting a different category or completing more activities to get better recommendations.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <span class="logo-text">Zenify</span>
+                        <p>Find Your Zen, Anytime, Anywhere</p>
+                    </div>
+                    <div class="footer-links">
+                        <div class="footer-links-column">
+                            <h4>Quick Links</h4>
+                            <ul>
+                                <li><a href="{{ url_for('index') }}">Home</a></li>
+                                <li><a href="{{ url_for('about') }}">About</a></li>
+                                <li><a href="#">Contact</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Resources</h4>
+                            <ul>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Guides</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a href="#">Mental Health Resources</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Connect</h4>
+                            <ul class="social-links">
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                        Facebook
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                                        Twitter
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                        Instagram
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Zenify. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

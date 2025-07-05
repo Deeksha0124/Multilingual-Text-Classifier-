@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Zenify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <a href="{{ url_for('index') }}">
+                            <span class="logo-text">Zenify</span>
+                        </a>
+                    </div>
+                    <div class="nav-links">
+                        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                        <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                        <a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a>
+                        <a href="{{ url_for('recommendations') }}" class="nav-link">Recommendations</a>
+                        <a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
+                        <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                    </div>
+                    <div class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="dashboard-section">
+                <div class="container">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="dashboard-header">
+                        <div class="dashboard-greeting">
+                            <h1>Welcome, {{ user.username }}</h1>
+                            <p>Here's your wellness journey overview</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-sidebar">
+                            <div class="stats-card">
+                                <h3>Your Stats</h3>
+                                <div class="stat-item">
+                                    <span class="stat-label">Activities Completed</span>
+                                    <span class="stat-value">{{ stats.activities_completed }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Current Streak</span>
+                                    <span class="streak-value">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                                        {{ stats.streak }} days
+                                    </span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Favorite Category</span>
+                                    <span class="stat-value">{{ stats.favorite_category|capitalize if stats.favorite_category else 'None yet' }}</span>
+                                </div>
+                                {% if stats.last_activity %}
+                                <div class="stat-item">
+                                    <span class="stat-label">Last Activity</span>
+                                    <span class="stat-value">{{ stats.last_activity.name }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="categories-section">
+                                <h3>Activity Categories</h3>
+                                <div class="categories-grid">
+                                    {% for category in activity_categories %}
+                                    <a href="{{ url_for('recommendations', category=category) }}" class="category-card">
+                                        {% if category == 'meditation' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lotus"><path d="M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"/><path d="M12 15v9"/><path d="M5 10a7 7 0 0 0 14 0"/></svg>
+                                        </div>
+                                        <span class="category-name">Meditation</span>
+                                        
+                                        {% elif category == 'physical_exercise' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dumbbell"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+                                        </div>
+                                        <span class="category-name">Exercise</span>
+                                        
+                                        {% elif category == 'breathing_exercises' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wind"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+                                        </div>
+                                        <span class="category-name">Breathing</span>
+                                        
+                                        {% elif category == 'journaling' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-text"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><path d="M6 8h2"/><path d="M6 12h2"/><path d="M16 8h2"/><path d="M16 12h2"/></svg>
+                                        </div>
+                                        <span class="category-name">Journaling</span>
+                                        
+                                        {% elif category == 'social_connection' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                        </div>
+                                        <span class="category-name">Social</span>
+                                        
+                                        {% elif category == 'nature' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trees"><path d="M10 10v.2A3 3 0 0 1 8.9 16v0H5v0h0a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z"/><path d="M7 16v6"/><path d="M13 19v3"/><path d="M12 13v.2a3 3 0 0 0 1.1 5.8H17v0h0a3 3 0 0 0 1-5.8V13a3 3 0 0 0-6 0Z"/><path d="M13 7.1V13"/><path d="M13 7.1A3 3 0 0 1 9.1 5H9v0h0a3 3 0 0 1 0-4h0v0h.9A3 3 0 0 1 13 3.1v4Z"/></svg>
+                                        </div>
+                                        <span class="category-name">Nature</span>
+                                        
+                                        {% elif category == 'creative_expression' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-palette"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                                        </div>
+                                        <span class="category-name">Creative</span>
+                                        
+                                        {% elif category == 'mindfulness' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
+                                        </div>
+                                        <span class="category-name">Mindfulness</span>
+                                        
+                                        {% elif category == 'gratitude' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-handshake"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08v0c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg>
+                                        </div>
+                                        <span class="category-name">Gratitude</span>
+                                        
+                                        {% elif category == 'self_compassion' %}
+                                        <div class="category-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                        </div>
+                                        <span class="category-name">Self-compassion</span>
+                                        {% endif %}
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="stats-card">
+                                <h3>Weekly Activity</h3>
+                                <canvas id="activity-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-main">
+                            <div class="recommendations-section">
+                                <div class="section-header">
+                                    <h2>Recommended for You</h2>
+                                    <a href="{{ url_for('recommendations') }}" class="view-all">View All</a>
+                                </div>
+                                
+                                <div class="activities-grid">
+                                    {% for activity in recommendations %}
+                                    <div class="activity-card">
+                                        <div class="activity-header">
+                                            <span class="activity-category">{{ activity.category|replace('_', ' ')|capitalize }}</span>
+                                            <span class="activity-difficulty difficulty-{{ activity.difficulty }}">{{ activity.difficulty }}</span>
+                                        </div>
+                                        <h3 class="activity-title">{{ activity.name }}</h3>
+                                        <p class="activity-description">{{ activity.description }}</p>
+                                        <div class="activity-footer">
+                                            <span class="relevance-score">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                                                {{ (activity.relevance_score * 100)|int }}% match
+                                            </span>
+                                            <a href="{{ url_for('activity_detail', activity_id=activity.id) }}" class="activity-action">View Details</a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="stats-card">
+                                <div class="section-header">
+                                    <h3>Your Activity Distribution</h3>
+                                </div>
+                                <canvas id="category-chart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <span class="logo-text">Zenify</span>
+                        <p>Find Your Zen, Anytime, Anywhere</p>
+                    </div>
+                    <div class="footer-links">
+                        <div class="footer-links-column">
+                            <h4>Quick Links</h4>
+                            <ul>
+                                <li><a href="{{ url_for('index') }}">Home</a></li>
+                                <li><a href="{{ url_for('about') }}">About</a></li>
+                                <li><a href="#">Contact</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Resources</h4>
+                            <ul>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Guides</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a href="#">Mental Health Resources</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Connect</h4>
+                            <ul class="social-links">
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                        Facebook
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                                        Twitter
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                        Instagram
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Zenify. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

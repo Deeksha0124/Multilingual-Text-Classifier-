@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Survey - Zenify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <a href="{{ url_for('index') }}">
+                            <span class="logo-text">Zenify</span>
+                        </a>
+                    </div>
+                    <div class="nav-links">
+                        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                        <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                        {% if session.get('user_id') %}
+                            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                            <a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
+                            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                            <a href="{{ url_for('register') }}" class="nav-link">Sign Up</a>
+                        {% endif %}
+                    </div>
+                    <div class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="survey-section">
+                <div class="container">
+                    <div class="survey-container">
+                        <div class="survey-intro">
+                            <h1>Mental Health & Self-care Survey</h1>
+                            <p>We kindly ask you to spend a few minutes of your valuable time to fill out this survey. Your responses will play a crucial role in helping us create personalized recommendations for your mental wellness journey.</p>
+                        </div>
+                        
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        
+                        <form action="{{ url_for('survey') }}" method="POST" class="survey-form">
+                            <div class="form-group">
+                                <label for="age_group" class="question-label">1. What is your age group?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="age_under18" name="age_group" value="Under 18" required>
+                                        <label for="age_under18">Under 18</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_18_24" name="age_group" value="18-24">
+                                        <label for="age_18_24">18-24</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_25_34" name="age_group" value="25-34">
+                                        <label for="age_25_34">25-34</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_35_44" name="age_group" value="35-44">
+                                        <label for="age_35_44">35-44</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_45_54" name="age_group" value="45-54">
+                                        <label for="age_45_54">45-54</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_55_plus" name="age_group" value="55+">
+                                        <label for="age_55_plus">55+</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="age_prefer_not" name="age_group" value="Prefer not to say">
+                                        <label for="age_prefer_not">Prefer not to say</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="gender" class="question-label">2. What is your gender?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="gender_male" name="gender" value="Male" required>
+                                        <label for="gender_male">Male</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="gender_female" name="gender" value="Female">
+                                        <label for="gender_female">Female</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="gender_nonbinary" name="gender" value="Non-binary">
+                                        <label for="gender_nonbinary">Non-binary</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="gender_other" name="gender" value="Other">
+                                        <label for="gender_other">Other</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="gender_prefer_not" name="gender" value="Prefer not to say">
+                                        <label for="gender_prefer_not">Prefer not to say</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="doubt_frequency" class="question-label">3. How often do you find yourself doubting your abilities?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="doubt_never" name="doubt_frequency" value="Never" required>
+                                        <label for="doubt_never">Never</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="doubt_rarely" name="doubt_frequency" value="Rarely">
+                                        <label for="doubt_rarely">Rarely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="doubt_sometimes" name="doubt_frequency" value="Sometimes">
+                                        <label for="doubt_sometimes">Sometimes</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="doubt_often" name="doubt_frequency" value="Very Often">
+                                        <label for="doubt_often">Very Often</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="stress_frequency" class="question-label">4. How frequently do you feel stressed?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="stress_never" name="stress_frequency" value="Never" required>
+                                        <label for="stress_never">Never</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="stress_rarely" name="stress_frequency" value="Rarely">
+                                        <label for="stress_rarely">Rarely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="stress_occasionally" name="stress_frequency" value="Occasionally">
+                                        <label for="stress_occasionally">Occasionally</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="stress_few_times" name="stress_frequency" value="A Few Times a Week">
+                                        <label for="stress_few_times">A Few Times a Week</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="stress_almost_daily" name="stress_frequency" value="Almost Every Day">
+                                        <label for="stress_almost_daily">Almost Every Day</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="anxiety_frequency" class="question-label">5. Do you often feel anxious when faced with difficult situations?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="anxiety_never" name="anxiety_frequency" value="Never" required>
+                                        <label for="anxiety_never">Never</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="anxiety_rarely" name="anxiety_frequency" value="Rarely">
+                                        <label for="anxiety_rarely">Rarely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="anxiety_sometimes" name="anxiety_frequency" value="Sometimes">
+                                        <label for="anxiety_sometimes">Sometimes</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="anxiety_often" name="anxiety_frequency" value="Often">
+                                        <label for="anxiety_often">Often</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="anxiety_always" name="anxiety_frequency" value="Always">
+                                        <label for="anxiety_always">Always</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="self_appreciation" class="question-label">6. How often do you take a moment to appreciate or praise yourself?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="appreciate_hardly" name="self_appreciation" value="Hardly Ever" required>
+                                        <label for="appreciate_hardly">Hardly Ever</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="appreciate_once" name="self_appreciation" value="Once in a While">
+                                        <label for="appreciate_once">Once in a While</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="appreciate_weekly" name="self_appreciation" value="Weekly">
+                                        <label for="appreciate_weekly">Weekly</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="appreciate_daily" name="self_appreciation" value="Daily">
+                                        <label for="appreciate_daily">Daily</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="self_care_frequency" class="question-label">7. Do you reward yourself or practice self-care as a treat?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="selfcare_never" name="self_care_frequency" value="Never" required>
+                                        <label for="selfcare_never">Never</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="selfcare_rarely" name="self_care_frequency" value="Rarely">
+                                        <label for="selfcare_rarely">Rarely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="selfcare_occasionally" name="self_care_frequency" value="Occasionally">
+                                        <label for="selfcare_occasionally">Occasionally</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="selfcare_frequently" name="self_care_frequency" value="Frequently">
+                                        <label for="selfcare_frequently">Frequently</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="meditation_frequency" class="question-label">8. How regularly do you practice meditation or mindfulness?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="meditation_never" name="meditation_frequency" value="Never" required>
+                                        <label for="meditation_never">Never</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="meditation_rarely" name="meditation_frequency" value="Rarely">
+                                        <label for="meditation_rarely">Rarely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="meditation_occasionally" name="meditation_frequency" value="Occasionally">
+                                        <label for="meditation_occasionally">Occasionally</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="meditation_few_times" name="meditation_frequency" value="A Few Times a Week">
+                                        <label for="meditation_few_times">A Few Times a Week</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="meditation_daily" name="meditation_frequency" value="Every Day">
+                                        <label for="meditation_daily">Every Day</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="exercise_frequency" class="question-label">9. How often do you engage in physical exercise or movement?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="exercise_not" name="exercise_frequency" value="Not at All" required>
+                                        <label for="exercise_not">Not at All</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="exercise_once" name="exercise_frequency" value="Once in a While">
+                                        <label for="exercise_once">Once in a While</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="exercise_weekly" name="exercise_frequency" value="Weekly">
+                                        <label for="exercise_weekly">Weekly</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="exercise_daily" name="exercise_frequency" value="Daily">
+                                        <label for="exercise_daily">Daily</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mental_health_importance" class="question-label">10. In your opinion, how important is mental health compared to physical health?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="importance_not" name="mental_health_importance" value="Not Important" required>
+                                        <label for="importance_not">Not Important</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="importance_less" name="mental_health_importance" value="Less Important">
+                                        <label for="importance_less">Less Important</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="importance_equal" name="mental_health_importance" value="Equally Important">
+                                        <label for="importance_equal">Equally Important</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="importance_more" name="mental_health_importance" value="More Important">
+                                        <label for="importance_more">More Important</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="app_openness" class="question-label">11. Would you be open to using an app that provides personalized self-care tips and mental wellness recommendations?</label>
+                                <div class="options">
+                                    <div class="option">
+                                        <input type="radio" id="app_definitely" name="app_openness" value="Definitely" required>
+                                        <label for="app_definitely">Definitely</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="app_maybe" name="app_openness" value="Maybe">
+                                        <label for="app_maybe">Maybe</label>
+                                    </div>
+                                    <div class="option">
+                                        <input type="radio" id="app_not" name="app_openness" value="Not Interested">
+                                        <label for="app_not">Not Interested</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="existing_practices" class="question-label">12. Do you have any go-to practices or routines to maintain good mental health?</label>
+                                <textarea id="existing_practices" name="existing_practices" rows="4" placeholder="Please share any practices you currently follow, or type 'none' if you don't have any."></textarea>
+                            </div>
+                            
+                            <div class="survey-navigation">
+                                <button type="submit" class="btn btn-primary">Submit Survey</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <span class="logo-text">Zenify</span>
+                        <p>Find Your Zen, Anytime, Anywhere</p>
+                    </div>
+                    <div class="footer-links">
+                        <div class="footer-links-column">
+                            <h4>Quick Links</h4>
+                            <ul>
+                                <li><a href="{{ url_for('index') }}">Home</a></li>
+                                <li><a href="{{ url_for('about') }}">About</a></li>
+                                <li><a href="#">Contact</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Resources</h4>
+                            <ul>
+                                <li><a href="#">Blog</a></li>
+                                <li><a href="#">Guides</a></li>
+                                <li><a href="#">FAQ</a></li>
+                                <li><a href="#">Mental Health Resources</a></li>
+                            </ul>
+                        </div>
+                        <div class="footer-links-column">
+                            <h4>Connect</h4>
+                            <ul class="social-links">
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                                        Facebook
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                                        Twitter
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                                        Instagram
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Zenify. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

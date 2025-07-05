@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Zenify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">
+                        <a href="{{ url_for('index') }}">
+                            <span class="logo-text">Zenify</span>
+                        </a>
+                    </div>
+                    <div class="nav-links">
+                        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+                        <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                        <a href="{{ url_for('login') }}" class="nav-link active">Login</a>
+                        <a href="{{ url_for('register') }}" class="nav-link">Sign Up</a>
+                    </div>
+                    <div class="menu-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section class="auth-section">
+                <div class="container">
+                    <div class="auth-container">
+                        <div class="auth-content">
+                            <h1>Welcome Back</h1>
+                            <p class="auth-subtitle">Continue your mindfulness journey</p>
+                            
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }}">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            
+                            <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" id="password" name="password" required>
+                                </div>
+                                <div class="form-group form-check">
+                                    <input type="checkbox" id="remember" name="remember">
+                                    <label for="remember">Remember me</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                            </form>
+                            
+                            <div class="auth-alternate">
+                                <p>Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
+                                <p><a href="#">Forgot your password?</a></p>
+                            </div>
+                        </div>
+                        <div class="auth-image">
+                            <img src="https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Peaceful lake scene">
+                            <div class="auth-image-overlay">
+                                <h2>Welcome Back</h2>
+                                <p>"Peace comes from within. Do not seek it without."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer footer-simple">
+            <div class="container">
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Zenify. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
