@@ -41,7 +41,7 @@ With so much text data being generated in different languages on social media, e
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/<your-username>/multilingual-text-classifier.git
+git clone https://github.com/Deeksha0124/Multilingual-Text-Classifier-.git
 cd multilingual-text-classifier
 ```
 
@@ -64,4 +64,5 @@ pip install -r requirements.txt
 python app.py
 ```
 The app will be live at `http://127.0.0.1:5000`
+
 
