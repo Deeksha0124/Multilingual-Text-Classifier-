@@ -65,4 +65,45 @@ python app.py
 ```
 The app will be live at `http://127.0.0.1:5000`
 
+## Usage
 
+1. Open the app in browser.
+2. Enter text manually **or** use 🎤 voice input.
+3. Click **Analyze**.
+4. View language, translated text, sentiment, category and confidence
+5. Export results or download charts.
+
+## System Architecture
+
+```
+[Frontend UI]  ⇄  [Flask API Server] ⇄ [NLP Models]
+                                     ⇄ [Google Translator API]
+                                     ⇄ [MongoDB Storage]
+                                     ⇄ [Dataset Analysis (Seaborn/Matplotlib)]
+```
+
+- **Frontend**: Accepts user input and displays results
+- **Backend**: Handles prediction, translation, database operations
+- **Database**: Stores all reviews and analytics data
+
+## Troubleshooting
+
+- **MongoDB Connection Error**:
+  Ensure MongoDB is running locally or check Atlas URI in `app.py`
+
+- **CORS issues**:
+  Install Flask-CORS: `pip install flask-cors`
+
+- **Voice Input not working**:
+  Web Speech API supported only in Chrome and Edge browsers.
+
+## Output Sample
+
+![image](https://github.com/user-attachments/assets/46ae25a3-a70a-4895-a975-e1c672173050)
+
+---
+
+## 📦 Exported Files
+- `predictions.csv`
+- `predictions.json`
+- `dataset_analysis.png`
